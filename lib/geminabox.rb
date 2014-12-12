@@ -43,7 +43,8 @@ module Geminabox
       :allow_delete,
       :rubygems_proxy,
       :http_adapter,
-      :allow_remote_failure
+      :allow_remote_failure,
+      :s3_sync_dir
     )
 
     def set_defaults(defaults)
@@ -56,7 +57,7 @@ module Geminabox
     def settings
       Server.settings
     end
-    
+
     def call(env)
       Server.call env
     end
@@ -73,7 +74,8 @@ module Geminabox
     rubygems_proxy:       (ENV['RUBYGEMS_PROXY'] == 'true'),
     allow_delete:         true,
     http_adapter:         HttpClientAdapter.new,
-    allow_remote_failure: false
+    allow_remote_failure: false,
+    s3_sync_dir:          nil
   )
-    
+
 end
