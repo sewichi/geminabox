@@ -17,7 +17,8 @@ module Geminabox
       :allow_replace,
       :gem_permissions,
       :allow_delete,
-      :rubygems_proxy
+      :rubygems_proxy,
+      :rubygems_url
     )
 
     if Server.rubygems_proxy
