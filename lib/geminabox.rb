@@ -8,8 +8,12 @@ require 'rubygems/package'
 require 'rss/atom'
 require 'tempfile'
 require 'json'
+require 'tilt/erb'
 
 module Geminabox
+
+  class Error < StandardError ; end
+  class AlreadyLocked < Error ; end
 
   require_relative 'geminabox/version'
   require_relative 'geminabox/proxy'
@@ -43,9 +47,13 @@ module Geminabox
       :allow_delete,
       :rubygems_proxy,
       :http_adapter,
+      :lockfile,
+      :retry_interval,
       :allow_remote_failure,
-      :s3_sync_dir,
-      :rubygems_url
+      :ruby_gems_url,
+      :bundler_ruby_gems_url,
+      :allow_upload,
+      :s3_sync_dir
     )
 
     def set_defaults(defaults)
@@ -65,19 +73,23 @@ module Geminabox
   end
 
   set_defaults(
-    data:                 File.join(File.dirname(__FILE__), *%w[.. data]),
-    public_folder:        File.join(File.dirname(__FILE__), *%w[.. public]),
-    build_legacy:         false,
-    incremental_updates:  true,
-    views:                File.join(File.dirname(__FILE__), *%w[.. views]),
-    allow_replace:        false,
-    gem_permissions:      0644,
-    rubygems_proxy:       (ENV['RUBYGEMS_PROXY'] == 'true'),
-    allow_delete:         true,
-    http_adapter:         HttpClientAdapter.new,
-    allow_remote_failure: false,
-    s3_sync_dir:          nil,
-    rubygems_url:         "https://rubygems.org"
+    data:                  File.join(File.dirname(__FILE__), *%w[.. data]),
+    public_folder:         File.join(File.dirname(__FILE__), *%w[.. public]),
+    build_legacy:          false,
+    incremental_updates:   true,
+    views:                 File.join(File.dirname(__FILE__), *%w[.. views]),
+    allow_replace:         false,
+    gem_permissions:       0644,
+    rubygems_proxy:        (ENV['RUBYGEMS_PROXY'] == 'true'),
+    allow_delete:          true,
+    http_adapter:          HttpClientAdapter.new,
+    lockfile:              '/tmp/geminabox.lockfile',
+    retry_interval:        60,
+    allow_remote_failure:  false,
+    ruby_gems_url:         'https://rubygems.org/',
+    bundler_ruby_gems_url: 'https://bundler.rubygems.org/',
+    allow_upload:          true,
+    s3_sync_dir:           nil
   )
 
 end
