@@ -71,7 +71,7 @@ module Geminabox
             reindex(:force_rebuild)
           end
         end
-        s3_sync
+        s3_sync(:force_rebuild)
       rescue Gem::SystemExitException
       end
 
@@ -83,8 +83,13 @@ module Geminabox
         end
       end
 
-      def s3_sync
-        system("s3cmd sync #{ensure_dir_path(data)} #{ensure_dir_path(s3_sync_dir)} --exclude _cache/*") if s3_sync_dir
+      def s3_sync(force_rebuild = false)
+        if force_rebuild
+          system("aws s3 sync #{ensure_dir_path(data)} #{ensure_dir_path(s3_sync_dir)} --exclude _cache/* --size-only --delete") if s3_sync_dir
+        else
+          # changes in last 60 minutes
+          system("cd #{ensure_dir_path(data)};find * -type f -cmin -60 -not -path '_cache/*' | xargs -I{} aws s3 cp '#{ensure_dir_path(data)}{}' '#{ensure_dir_path(s3_sync_dir)}{}'") if s3_sync_dir
+        end
       end
 
       def indexer
