@@ -71,7 +71,7 @@ module Geminabox
             reindex(:force_rebuild)
           end
         end
-        s3_sync(:force_rebuild)
+        s3_sync(force_rebuild)
       rescue Gem::SystemExitException
       end
 
