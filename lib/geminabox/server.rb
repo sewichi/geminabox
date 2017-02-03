@@ -85,7 +85,7 @@ module Geminabox
 
       def s3_sync(force_rebuild = false)
         if s3_sync_dir
-          pid = spawn("aws s3 sync '#{ensure_dir_path(data)}' '#{ensure_dir_path(s3_sync_dir)}' --exclude _cache/* --size-only --delete")
+          pid = spawn("aws s3 sync '#{ensure_dir_path(data)}' '#{ensure_dir_path(s3_sync_dir)}' --exclude _cache/* --delete")
           Process.detach(pid)
         end
       end
