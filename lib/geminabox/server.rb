@@ -150,17 +150,19 @@ module Geminabox
       gems = Hash[load_gems.by_name]
       @gem = gems[params[:gemname]]
       halt 404 unless @gem
+      @allow_delete = self.class.allow_delete?
       erb :gem
     end
 
     delete '/gems/*.gem' do
       unless self.class.allow_delete?
-        error_response(403, 'Gem deletion is disabled - see https://github.com/cwninja/geminabox/issues/115')
+        error_response(403, 'Gem deletion is disabled - see https://github.com/geminabox/geminabox/issues/115')
       end
 
+      params[:force_rebuild] ||= 'false'
       serialize_update do
         File.delete file_path if File.exist? file_path
-        self.class.reindex(:force_rebuild)
+        self.class.reindex(params[:force_rebuild])
         redirect url("/")
       end
 
