@@ -162,7 +162,8 @@ module Geminabox
       params[:force_rebuild] ||= 'false'
       serialize_update do
         File.delete file_path if File.exist? file_path
-        self.class.reindex(params[:force_rebuild])
+        force_rebuild = params[:force_rebuild] == 'true'
+        self.class.reindex(force_rebuild)
         redirect url("/")
       end
 
